@@ -76,7 +76,6 @@ function render(templateName, /* data object will be passed here as the second p
      }
 
      if (!templateToRender) {
-          console.log('hi');
           return "ERR_UNKNOWN_TEMPLATE";
      }
 

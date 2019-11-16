@@ -42,8 +42,6 @@ const logger = log4js.getLogger();
           process.exit(-1);
      }
 
-     console.log(process.env.DEV_MODE);
-
      if (process.env.DEV_MODE) {
           logger.warn('Development mode is enabled');
      }
