@@ -26,6 +26,10 @@ const logger = log4js.getLogger();
 (() => {
      logger.info(`Starting F1 Alerts Bot ${process.env.npm_package_version}`);
 
+     // Load all the message templates for the bot
+     logger.info('Loading templates');
+     require('./bot/templates').load();
+
      try {
           f1bot.init();
      } catch (err) {
@@ -37,6 +41,8 @@ const logger = log4js.getLogger();
           logger.fatal(`'TELEGRAM_CHANNEL_ID' env var is not defined`);
           process.exit(-1);
      }
+
+     console.log(process.env.DEV_MODE);
 
      if (process.env.DEV_MODE) {
           logger.warn('Development mode is enabled');

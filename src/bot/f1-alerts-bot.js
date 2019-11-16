@@ -14,13 +14,14 @@ process.env.NTBA_FIX_319 = 1;
 process.env.NTBA_FIX_350 = 1;
 
 const TelegramBot = require('node-telegram-bot-api');
-const log4js = require('log4js');
 const puppeteer = require('puppeteer');
+const { performance } = require('perf_hooks');
 const liveTimingApi = require('../api/f1-live-timing-api');
 const translate = require('./translate/translate');
+const templates = require('./templates');
 
 // Logger for this file
-const logger = log4js.getLogger();
+const logger = require('log4js').getLogger();
 
 // Bot instance
 let botInstance = null;
@@ -37,26 +38,7 @@ let currentSessionInfo = null;
  * @param {*} sessionInfo
  */
 function displayIncomingSessionInfoMessage(sessionInfo) {
-     var startDate = new Date(`${sessionInfo.StartDate}${sessionInfo.GmtOffset.substring(0, 6)}`);
-     var endDate = new Date(`${sessionInfo.EndDate}${sessionInfo.GmtOffset.substring(0, 6)}`);
-
-botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, `\u{1F3CE} <b>${sessionInfo.Meeting.Name.toUpperCase()}</b> \u{1F3CE}
-
-<b>\u{1F1FA}\u{1F1F8} INCOMING SESSION \u{1F1FA}\u{1F1F8}</b>
-<b>\u{1F1EA}\u{1F1F8} PRÓXIMA SESIÓN \u{1F1EA}\u{1F1F8}</b>
-
-<b>\u{1F1FA}\u{1F1F8} ${sessionInfo.Name} \u{1F1FA}\u{1F1F8}</b>
-<b>\u{1F1EA}\u{1F1F8} ${translate('es-ES', sessionInfo.Name)} \u{1F1EA}\u{1F1F8}</b>
-
-<b>\u{2139} INFO \u{2139}</b>
-
-<b>\u{1F1FA}\u{1F1F8} English / Inglés \u{1F1FA}\u{1F1F8}:</b>
-<b>Start Date:</b> ${startDate.toLocaleString('en-EN', { dateStyle: 'short', timeStyle: 'full', timeZone: 'America/Cancun' })}
-<b>End Date:</b> ${endDate.toLocaleString('en-EN', { dateStyle: 'short', timeStyle: 'full', timeZone: 'America/Cancun' })}
-
-<b>\u{1F1EA}\u{1F1F8} Español / Spanish \u{1F1EA}\u{1F1F8}:</b>
-<b>Fecha de inicio:</b> ${startDate.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'full', timeZone: 'Europe/Madrid' })}
-<b>Fecha de fin:</b> ${endDate.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'full', timeZone: 'Europe/Madrid' })}`, {
+     botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionInfo', sessionInfo), {
           parse_mode: 'HTML'
      });
 }
@@ -70,45 +52,50 @@ botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, `\u{1F3CE} <b>${session
  * @param {*} sessionResults
  */
 function displaySessionResultsMessage(sessionResults) {
+     // Send results alert message
+     botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionResults', sessionResults), {
+          parse_mode: 'HTML'
+     });
+
+     // Build the results table
      var driverStandingsData = sessionResults.free.data.DR;
 
-     // Standings header
-     var driverStandingsText = `<b><u>${sessionResults.free.data.R}</u></b>
+     // Header
+     var driverStandingsText = `<b><u>${sessionResults.free.data.R}</u></b>\r\n\r\n`;
+     driverStandingsText += `<b>${sessionResults.free.data.S.toUpperCase()}\r\n`;
+     driverStandingsText += `${translate('es-ES', sessionResults.free.data.S).toUpperCase()}</b>\n\n`;
 
-<b>${sessionResults.free.data.S.toUpperCase()}
-${translate('es-ES', sessionResults.free.data.S).toUpperCase()}</b>\n\n`;
-
-     // Add lap count if needed
+     // Display lap count if needed
      if (sessionResults.free.data.L > 0) {
-          driverStandingsText += `<b>${sessionResults.free.data.L} LAPS
-${sessionResults.free.data.L} VUELTAS</b>\n\n`;
+          driverStandingsText += `<b>${sessionResults.free.data.L} LAPS\r\n`;
+          driverStandingsText += `${sessionResults.free.data.L} VUELTAS</b>\r\n\r\n`;
      }
 
-     // Display the results in finishing order
+     // Build the standings table
      for (var i = 0; i < driverStandingsData.length; i++) {
           for (var j = 0; j < driverStandingsData.length; j++) {
                if ((i + 1).toString() === driverStandingsData[j].F[3]) {
-                    var driverEntry = `${driverStandingsData[j].F[3].padStart(2)}  ${driverStandingsData[j].F[0]}  ${driverStandingsData[j].F[1]}  ${driverStandingsData[j].F[4]}`;
+                    var driverEntry = `${driverStandingsData[j].F[3].padStart(2)}  `;
+                    driverEntry += `${driverStandingsData[j].F[0]}  `;
+                    driverEntry += `${driverStandingsData[j].F[1]}  `;
+                    driverEntry += `${driverStandingsData[j].F[4]}`;
+
                     driverStandingsText += `${driverEntry.padEnd(25)}\n`;
                }
           }
      }
 
-     // Send results alert message
-     botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, `\u{1F3CE} <b>${sessionResults.free.data.R}</b> \u{1F3CE}
-
-<b>\u{1F1FA}\u{1F1F8} SESSION RESULTS \u{1F1FA}\u{1F1F8}</b>
-<b>\u{1F1EA}\u{1F1F8} RESULTADOS DE LA SESIÓN \u{1F1EA}\u{1F1F8}</b>
-
-<b>\u{1F1FA}\u{1F1F8} ${sessionResults.free.data.S} \u{1F1FA}\u{1F1F8}</b>
-<b>\u{1F1EA}\u{1F1F8} ${translate('es-ES', sessionResults.free.data.S)} \u{1F1EA}\u{1F1F8}</b>
-
-\u{2B07}\u{2B07}\u{2B07}\u{2B07}\u{2B07}\u{2B07}`, {
-          parse_mode: 'HTML'
-     });
-
-     // Generate and send the results photo
+     // Generate a photo of the results and send it
      (async () => {
+          if (process.env.DEV_MODE) {
+               logger.debug(`Generating results photo`);
+          }
+
+          // Measure the time taken to generate the photo
+          if (process.env.DEV_MODE)  {
+               var perfTimeStart = performance.now();
+          }
+
           const browser = await puppeteer.launch();
           const page = await browser.newPage();
 
@@ -125,8 +112,11 @@ ${sessionResults.free.data.L} VUELTAS</b>\n\n`;
                }
           });
 
-          botInstance.sendPhoto(process.env.TELEGRAM_CHANNEL_ID, standingsPhoto);
+          if (process.env.DEV_MODE)  {
+               logger.debug(`Results photo generated in ${performance.now() - perfTimeStart}ms`);
+          }
 
+          botInstance.sendPhoto(process.env.TELEGRAM_CHANNEL_ID, standingsPhoto);
           await browser.close();
      })();
 }
@@ -173,11 +163,11 @@ module.exports = {
                                    return;
                               }
 
-                              logger.info(`Sending session info results (${sessionInfo.Meeting.Name} - ${sessionInfo.Name})`);
+                              logger.info(`Sending completed session results (${sessionInfo.Meeting.Name} - ${sessionInfo.Name})`);
                               displaySessionResultsMessage(sessionResults);
                          });
                     } else {
-                         logger.info(`Sending session info alert (${sessionInfo.Meeting.Name} - ${sessionInfo.Name})`);
+                         logger.info(`Sending incoming session info alert (${sessionInfo.Meeting.Name} - ${sessionInfo.Name})`);
                          displayIncomingSessionInfoMessage(sessionInfo);
                     }
                }

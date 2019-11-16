@@ -1,0 +1,17 @@
+🏎 <b>{{sessionInfo.Meeting.Name.toUpperCase()}}</b> 🏎
+
+<b>🇺🇸 INCOMING SESSION 🇺🇸</b>
+<b>🇪🇸 PRÓXIMA SESIÓN 🇪🇸</b>
+
+<b>🇺🇸 {{sessionInfo.Name}} 🇺🇸</b>
+<b>🇪🇸 {{translate('es-ES', sessionInfo.Name)}} 🇪🇸</b>
+
+<b>ℹ️ INFO ℹ️</b>
+
+<b>🇺🇸 English / Inglés 🇺🇸:</b>
+<b>Start Date:</b> {{new Date(`${sessionInfo.StartDate}${sessionInfo.GmtOffset.substring(0, 6)}`).toLocaleString('en-EN', { dateStyle: 'short', timeStyle: 'full', timeZone: 'America/Cancun' })}}
+<b>End Date:</b> {{new Date(`${sessionInfo.EndDate}${sessionInfo.GmtOffset.substring(0, 6)}`).toLocaleString('en-EN', { dateStyle: 'short', timeStyle: 'full', timeZone: 'America/Cancun' })}}
+
+<b>🇪🇸 Español / Spanish 🇪🇸:</b>
+<b>Fecha de inicio:</b> {{new Date(`${sessionInfo.StartDate}${sessionInfo.GmtOffset.substring(0, 6)}`).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'full', timeZone: 'Europe/Madrid' })}}
+<b>Fecha de fin:</b> {{new Date(`${sessionInfo.EndDate}${sessionInfo.GmtOffset.substring(0, 6)}`).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'full', timeZone: 'Europe/Madrid' })}}

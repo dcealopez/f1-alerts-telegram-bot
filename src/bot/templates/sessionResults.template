@@ -1,0 +1,9 @@
+🏎 <b>{{sessionResults.free.data.R}}</b> 🏎
+
+<b>🇺🇸 SESSION RESULTS 🇺🇸</b>
+<b>🇪🇸 RESULTADOS DE LA SESIÓN 🇪🇸</b>
+
+<b>🇺🇸 {{sessionResults.free.data.S}} 🇺🇸</b>
+<b>🇪🇸 {{translate('es-ES', sessionResults.free.data.S)}} 🇪🇸</b>
+
+ℹ️⬇️⬇️⬇️⬇️⬇️⬇️ℹ️
