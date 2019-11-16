@@ -1,0 +1,26 @@
+{
+  "name": "f1-alerts-telegram-bot",
+  "version": "1.0.0",
+  "description": "F1 Alerts Bot for Telegram",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "node src/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dcealopez/f1-alerts-telegram-bot.git"
+  },
+  "author": "dcealopez",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/dcealopez/f1-alerts-telegram-bot/issues"
+  },
+  "homepage": "https://github.com/dcealopez/f1-alerts-telegram-bot#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "log4js": "^6.0.0",
+    "node-telegram-bot-api": "^0.40.0",
+    "puppeteer": "^2.0.0",
+    "request": "^2.88.0"
+  }
+}
