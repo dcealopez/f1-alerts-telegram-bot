@@ -11,10 +11,14 @@
 require('dotenv').config();
 
 const log4js = require('log4js');
+const cron = require('cron');
 const f1bot = require('./bot/f1-alerts-bot');
 
 // Logger for this file
 const logger = log4js.getLogger();
+
+// Main bot loop cron job
+let botLoopCronJob = null;
 
 /**
  * Main function.
@@ -23,15 +27,16 @@ const logger = log4js.getLogger();
  *
  * @since 1.0.0
  */
-(() => {
-     logger.info(`Starting F1 Alerts Bot ${process.env.npm_package_version}`);
+(async () => {
+     logger.info(`Starting F1 Alerts Bot for Telegram`);
 
      // Load all the message templates for the bot
      logger.info('Loading templates');
      require('./bot/templates').load();
 
      try {
-          f1bot.init();
+          logger.info(`Initializing F1 Alerts Bot for Telegram`);
+          await f1bot.init();
      } catch (err) {
           logger.fatal(err);
           process.exit(-1);
@@ -46,20 +51,19 @@ const logger = log4js.getLogger();
           logger.warn('Development mode is enabled');
      }
 
-     if (!process.env.REFRESH_INTERVAL) {
-          logger.fatal(`'REFRESH_INTERVAL' env var is not defined`);
+     if (!process.env.BOT_LOOP_CRON_TIME) {
+          logger.fatal(`'BOT_LOOP_CRON_TIME' env var is not defined`);
+          process.exit(-1);
+     }
+
+     if (!process.env.ALERT_TIME_AHEAD) {
+          logger.fatal(`'ALERT_TIME_AHEAD' env var is not defined`);
           process.exit(-1);
      }
 
      logger.info(`Bot started for channel: ${process.env.TELEGRAM_CHANNEL_ID}`);
 
-     // Start gathering live data
-     setInterval(() => {
-          f1bot.lookForUpdates();
-     }, process.env.REFRESH_INTERVAL);
-
-     logger.info(`Started listening for updates`);
-
-     // Initial update
-     f1bot.lookForUpdates();
+     // Create and run the main bot loop cron job
+     botLoopCronJob = new cron.CronJob(process.env.BOT_LOOP_CRON_TIME, f1bot.lookForUpdates);
+     botLoopCronJob.start();
 })();

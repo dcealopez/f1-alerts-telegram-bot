@@ -11,7 +11,20 @@
 <b>Start Date:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-EN', { dateStyle: 'short', timeStyle: 'full', timeZone: 'America/Cancun' })}}
 <b>End Date:</b> {{new Date(`${sessionInfo.endTime}${sessionInfo.gmtOffset}`).toLocaleString('en-EN', { dateStyle: 'short', timeStyle: 'full', timeZone: 'America/Cancun' })}}
 
+<b>- Weather Report -</b>
+{{weather.getEmojiForWeatherCode(sessionInfo.WeatherReport.en.weather[0].id)}} <b>There's {{sessionInfo.WeatherReport.en.weather[0].description}}</b>
+<b>🌡 Temperature:</b> {{sessionInfo.WeatherReport.en.main.temp}} °F
+<b>🌬 Wind:</b> {{sessionInfo.WeatherReport.en.wind.speed}} mph
+<b>💧 Humidity:</b> {{sessionInfo.WeatherReport.en.main.humidity}}%
+
+
 <b>🇪🇸 Español / Spanish 🇪🇸:</b>
 
 <b>Fecha de inicio:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'full', timeZone: 'Europe/Madrid' })}}
 <b>Fecha de fin:</b> {{new Date(`${sessionInfo.endTime}${sessionInfo.gmtOffset}`).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'full', timeZone: 'Europe/Madrid' })}}
+
+<b>- Clima actual -</b>
+{{weather.getEmojiForWeatherCode(sessionInfo.WeatherReport.es.weather[0].id)}} <b>Hay {{sessionInfo.WeatherReport.es.weather[0].description}}</b>
+<b>🌡 Temperatura:</b> {{sessionInfo.WeatherReport.es.main.temp}} ℃
+<b>🌬 Viento:</b> {{sessionInfo.WeatherReport.es.wind.speed}} m/s
+<b>💧 Humedad:</b> {{sessionInfo.WeatherReport.es.main.humidity}}%

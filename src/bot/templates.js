@@ -1,7 +1,7 @@
 /**
- * Message template module
+ * Message template module.
  *
- * Message template module implementation for bot messages
+ * Message template module implementation for bot messages.
  *
  * @author dcealopez
  * @since 1.0.0
@@ -11,6 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const { performance } = require('perf_hooks');
 const translate = require('./translate/translate');
+const weather = require('../api/open-weather-map-api');
 
 // Logger for this file
 const logger = require('log4js').getLogger();
@@ -19,9 +20,9 @@ const logger = require('log4js').getLogger();
 let templates = [];
 
 /**
- * Template file loading
+ * Template file loading.
  *
- * Loads all the template files found in the 'templates' directory
+ * Loads all the template files found in the 'templates' directory.
  *
  * @since 1.0.0
  */
@@ -31,7 +32,7 @@ function load() {
      try {
           var templateFiles = fs.readdirSync('./src/bot/templates');
      } catch (err) {
-          logger.error(err);
+          logger.error(`Error while loading templates: ${err.toString()}`);
           return;
      }
 
@@ -47,15 +48,15 @@ function load() {
                templates.push({ templateName, templateData });
                logger.info(`Loaded template '${templateName}'`);
           } catch (err) {
-               logger.error(err);
+               logger.error(`Error while loading templates: ${err.toString()}`);
           }
      }
 }
 
 /**
- * Renders a template
+ * Renders a template.
  *
- * Renders the template with the given name and data
+ * Renders the template with the given name and data.
  *
  * @param {string} templateName the name of the template to render
  * @param {*} data object
@@ -85,7 +86,7 @@ function render(templateName, /* data object will be passed here as the second p
      }
 
      // Get all the JS code to evaluate using a regular expression
-     var matches = templateToRender.match(/\{\{.*\}\}/g);
+     var matches = templateToRender.match(/(\{\{(.*?)\}\})/g);
 
      // Evaluate and replace it with the evaluated values
      for (var i = 0; i < matches.length; i++) {

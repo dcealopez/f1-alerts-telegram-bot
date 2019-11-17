@@ -16,7 +16,8 @@ process.env.NTBA_FIX_350 = 1;
 const TelegramBot = require('node-telegram-bot-api');
 const puppeteer = require('puppeteer');
 const { performance } = require('perf_hooks');
-const liveTimingApi = require('../api/f1-live-timing-api');
+const f1api = require('../api/formula1-api');
+const weatherApi = require('../api/open-weather-map-api');
 const translate = require('./translate/translate');
 const templates = require('./templates');
 
@@ -26,8 +27,64 @@ const logger = require('log4js').getLogger();
 // Bot instance
 let botInstance = null;
 
-// Current F1 Session Info
-let currentSessionInfo = null;
+// Session alerts status object
+let sessionAlertsStatus = null;
+
+// Browser and page for results rendering
+let browser = null;
+let page = null;
+
+/**
+ * Request callback.
+ *
+ * @since 1.0.0
+ * @callback callback
+ * @param {string} error
+ * @param {string} response body
+ */
+
+/**
+ * Session weather report data fetcher
+ *
+ * Gets the weather report for the specified session
+ *
+ * @param {*} sessionInfo
+ * @param {callback} callback
+ */
+function getSessionWeatherReport(sessionInfo, callback) {
+     var weatherReport = { };
+
+     // Attempt to get the current weather data
+     // Sadly we will need to make two calls to get the info translated
+     weatherApi.getWeatherDataAt(sessionInfo.race.meetingLocalityName, sessionInfo.race.meetingCountryName, 'en', 'imperial', (err, res) => {
+          if (err) {
+               callback(err, null)
+               return;
+          }
+
+          if (!res.weather || !res.main || !res.wind) {
+               callback('No weather data', null);
+               return;
+          }
+
+          weatherReport.en = res;
+
+          weatherApi.getWeatherDataAt(sessionInfo.race.meetingLocalityName, sessionInfo.race.meetingCountryName, 'es', 'metric', (err, res) => {
+               if (err) {
+                    callback(err, null);
+                    return;
+               }
+
+               if (!res.weather || !res.main || !res.wind) {
+                    callback('No weather data', null);
+                    return;
+               }
+
+               weatherReport.es = res;
+               callback(null, weatherReport);
+          });
+     });
+};
 
 /**
  * Session info displaying.
@@ -38,10 +95,60 @@ let currentSessionInfo = null;
  * @param {*} sessionInfo
  */
 function displayIncomingSessionInfoMessage(sessionInfo) {
-     botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionInfo', sessionInfo), {
-          parse_mode: 'HTML'
+     var displayWeatherReport = true;
+
+     // Try to get the weather report if we can get the circuit's locality
+     f1api.getCircuitInfo((err, circuitInfo) => {
+          if (err || !circuitInfo.MRData.CircuitTable || !circuitInfo.MRData.CircuitTable.Circuits) {
+               if (err) {
+                    logger.error(`Error while getting circuit info: ${err.toString()}`);
+               }
+
+               displayWeatherReport = false;
+          }
+
+          // Look for the locality
+          if (displayWeatherReport) {
+               for (var i = 0; circuitInfo.MRData.CircuitTable.Circuits.length; i++) {
+                    if (circuitInfo.MRData.CircuitTable.Circuits[i].Location.country === sessionInfo.race.meetingCountryName) {
+                         sessionInfo.race.meetingLocalityName = circuitInfo.MRData.CircuitTable.Circuits[i].Location.locality;
+                         break;
+                    }
+               }
+          }
+
+          // Display extended info if we can get the weather report data for the session
+          getSessionWeatherReport(sessionInfo, async (err, weatherReport) => {
+               if (err || !displayWeatherReport) {
+                    logger.error(`Couldn't get weather data for session (${sessionInfo.race.meetingOfficialName} - ${sessionInfo.description})`);
+
+                    if (err) {
+                         logger.error(err.toString());
+                    }
+
+                    try {
+                         await botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionInfo', sessionInfo), {
+                              parse_mode: 'HTML'
+                         });
+                    } catch (err) {
+                         logger.error(`Error while sending message: ${err.toString()}`);
+                    }
+
+                    return;
+               }
+
+               sessionInfo.WeatherReport = weatherReport;
+
+               try {
+                    await botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionInfoPlusWeather', sessionInfo), {
+                         parse_mode: 'HTML'
+                    });
+               } catch (err) {
+                    logger.error(`Error while sending message: ${err.toString()}`);
+               }
+          });
      });
-}
+};
 
 /**
  * Session results displaying.
@@ -51,11 +158,15 @@ function displayIncomingSessionInfoMessage(sessionInfo) {
  * @since 1.0.0
  * @param {*} sessionResults
  */
-function displaySessionResultsMessage(sessionResults) {
+async function displaySessionResultsMessage(sessionResults) {
      // Send results alert message
-     botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionResults', sessionResults), {
-          parse_mode: 'HTML'
-     });
+     try {
+          await botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionResults', sessionResults), {
+               parse_mode: 'HTML'
+          });
+     } catch (err) {
+          logger.error(`Error while sending message: ${err.toString()}`);
+     }
 
      // Build the results table
      var driverStandingsData = sessionResults.free.data.DR;
@@ -96,9 +207,6 @@ function displaySessionResultsMessage(sessionResults) {
                var perfTimeStart = performance.now();
           }
 
-          const browser = await puppeteer.launch();
-          const page = await browser.newPage();
-
           await page.setContent(`<center><pre id="standings" style="display: inline-block;">${driverStandingsText}</pre></center>`);
           const standingsElement = await page.$("#standings");
           const standingsBoundaries = await standingsElement.boundingBox();
@@ -116,10 +224,13 @@ function displaySessionResultsMessage(sessionResults) {
                logger.debug(`Results photo generated in ${performance.now() - perfTimeStart}ms`);
           }
 
-          botInstance.sendPhoto(process.env.TELEGRAM_CHANNEL_ID, standingsPhoto);
-          await browser.close();
+          try {
+               await botInstance.sendPhoto(process.env.TELEGRAM_CHANNEL_ID, standingsPhoto);
+          } catch (err) {
+               logger.error(`Error while sending photo: ${err.toString()}`);
+          }
      })();
-}
+};
 
 module.exports = {
      /**
@@ -129,12 +240,16 @@ module.exports = {
       *
       * @since 1.0.0
       */
-     init: () => {
+     init: async() => {
           if (!process.env.BOT_TOKEN) {
                throw new Error(`'BOT_TOKEN' env var is not defined`);
           }
 
           botInstance = new TelegramBot(process.env.BOT_TOKEN);
+
+          // Pre-initialize the browser and page for results rendering
+          browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+          page = await browser.newPage();
      },
      /**
       * Session info listener.
@@ -144,42 +259,87 @@ module.exports = {
       * @since 1.0.0
       */
      lookForUpdates: () => {
-          liveTimingApi.getCurrentSessionInfo((err, sessionInfo) => {
+          if (process.env.DEV_MODE) {
+               logger.debug(`Looking for updates`);
+          }
+
+          // Query event info for incoming session messages
+          f1api.getEventInfo((err, eventInfo) => {
                if (err) {
-                    logger.error(err);
+                    logger.error(`Error while getting event info: ${err.toString()}`);
                     return;
                }
 
-               // Check for session status updates
-               if (currentSessionInfo === null ||
-                    (currentSessionInfo.ArchiveStatus.Status !== sessionInfo.ArchiveStatus.Status) ||
-                    (sessionInfo.Name !== currentSessionInfo.Name)) {
-                    currentSessionInfo = sessionInfo;
+               var timetables = eventInfo.seasonContext.timetables;
 
-                    if (sessionInfo.ArchiveStatus.Status === 'Complete') {
-                         liveTimingApi.getSessionResults(sessionInfo, (err, sessionResults) => {
-                              if (err) {
-                                   logger.error(err);
-                                   return;
-                              }
+               // Initialize session alerts status object
+               if (sessionAlertsStatus === null) {
+                    sessionAlertsStatus = [];
 
-                              logger.info(`Sending completed session results (${sessionInfo.Meeting.Name} - ${sessionInfo.Name})`);
-                              displaySessionResultsMessage(sessionResults);
+                    for (var i = 0; i < timetables.length; i++){
+                         sessionAlertsStatus.push({
+                              description: timetables[i].description,
+                              alertSent: false,
+                              resultsShown: false
                          });
-                    } else {
-                         logger.info(`Sending incoming session info alert (${sessionInfo.Meeting.Name} - ${sessionInfo.Name})`);
+                    }
+               }
+
+               // Loop through the timetables and show alerts for the incoming sessions
+               for (var i = 0; i < timetables.length; i++) {
+                    if (timetables[i].state === 'completed') {
+                         sessionAlertsStatus[i].alertSent = false;
+                         continue;
+                    }
+
+                    // Reset results shown status
+                    sessionAlertsStatus[i].resultsShown = false
+
+                    if (sessionAlertsStatus[i].alertSent) {
+                         continue;
+                    }
+
+                    var currentDate = new Date();
+                    var startTime = new Date(`${timetables[i].startTime}${timetables[i].gmtOffset}`);
+                    var msDifference = startTime.getTime() - currentDate.getTime();
+
+                    if (msDifference <= process.env.ALERT_TIME_AHEAD && msDifference > 0) {
+                         var sessionInfo = timetables[i];
+                         sessionInfo.race = eventInfo.race;
+                         sessionInfo.msToGo = msDifference;
+
+                         logger.info(`Sending incoming session info alert (${sessionInfo.race.meetingOfficialName} - ${timetables[i].description})`);
                          displayIncomingSessionInfoMessage(sessionInfo);
+                         sessionAlertsStatus[i].alertSent = true;
                     }
                }
           });
-     },
-     /**
-      * Bot instance getter.
-      *
-      * Gets the bot instance.
-      *
-      * @since 1.0.0
-      * @returns {TelegramBot} Telegram bot instance
-      */
-     getInstance: () => botInstance
+
+          f1api.getCurrentSessionInfo((err, sessionInfo) => {
+               if (err) {
+                    logger.error(`Error while getting session info: ${err.toString()}`);
+                    return;
+               }
+
+               // Show results if the session is completed
+               if (sessionInfo.ArchiveStatus.Status === 'Complete' && sessionAlertsStatus !== null) {
+                    for (var i = 0; i < sessionAlertsStatus.length; i++) {
+                         if (sessionInfo.Name === sessionAlertsStatus[i].description && !sessionAlertsStatus[i].resultsShown) {
+                              f1api.getSessionResults(sessionInfo, async (err, sessionResults) => {
+                                   if (err) {
+                                        logger.error(`Error while getting session results: ${err.toString()}`);
+                                        return;
+                                   }
+
+                                   logger.info(`Sending completed session results (${sessionResults.free.data.R} - ${sessionInfo.Name})`);
+                                   await displaySessionResultsMessage(sessionResults);
+                                   sessionAlertsStatus[i].resultsShown = true;
+                              });
+
+                              break;
+                         }
+                    }
+               }
+          });
+     }
 };

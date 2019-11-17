@@ -4,7 +4,7 @@
   "description": "F1 Alerts Bot for Telegram",
   "main": "src/main.js",
   "scripts": {
-    "test": "node src/main.js"
+    "start": "node src/main.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/dcealopez/f1-alerts-telegram-bot#readme",
   "dependencies": {
+    "cron": "^1.7.2",
     "dotenv": "^8.2.0",
     "log4js": "^6.0.0",
     "node-telegram-bot-api": "^0.40.0",
