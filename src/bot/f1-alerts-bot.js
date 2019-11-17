@@ -314,6 +314,7 @@ module.exports = {
                          for (let j = 0; j < sessionOrder.length; j++) {
                               if (sessionOrder[j] === timetables[i].session) {
                                    prevSessionIdx = j === 0 ? -1 : j - 1;
+                                   break;
                               }
                          }
 
