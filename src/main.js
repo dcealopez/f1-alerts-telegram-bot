@@ -39,12 +39,12 @@ let botLoopCronJob = null;
           await f1bot.init();
      } catch (err) {
           logger.fatal(err);
-          process.exit(-1);
+          return;
      }
 
      if (!process.env.TELEGRAM_CHANNEL_ID) {
           logger.fatal(`'TELEGRAM_CHANNEL_ID' env var is not defined`);
-          process.exit(-1);
+          return;
      }
 
      if (process.env.DEV_MODE) {
@@ -53,12 +53,17 @@ let botLoopCronJob = null;
 
      if (!process.env.BOT_LOOP_CRON_TIME) {
           logger.fatal(`'BOT_LOOP_CRON_TIME' env var is not defined`);
-          process.exit(-1);
+          return;
      }
 
      if (!process.env.ALERT_TIME_AHEAD) {
           logger.fatal(`'ALERT_TIME_AHEAD' env var is not defined`);
-          process.exit(-1);
+          return;
+     }
+
+     if (!process.env.SESSION_TIMES_ALERT_TIME_AHEAD) {
+          logger.fatal(`'SESSION_TIMES_ALERT_TIME_AHEAD' env var is not defined`);
+          return;
      }
 
      logger.info(`Bot started for channel: ${process.env.TELEGRAM_CHANNEL_ID}`);
@@ -67,3 +72,26 @@ let botLoopCronJob = null;
      botLoopCronJob = new cron.CronJob(process.env.BOT_LOOP_CRON_TIME, f1bot.lookForUpdates);
      botLoopCronJob.start();
 })();
+
+/**
+ * Unhandled Rejection Handler.
+ *
+ * Handles unhandled rejections.
+ *
+ * @since 1.0.0
+ */
+process.on('unhandledRejection', (reason, promise) => {
+     logger.error(`Unhandled rejection at: ${promise}, reason: ${reason}`);
+});
+
+/**
+ * Uncaught Exception Handler.
+ *
+ * Handles uncaught exceptions.
+ *
+ * @since 1.0.0
+ */
+process.on('uncaughtException', (ex) => {
+     logger.fatal(`Uncaught exception: ${ex.toString()}`);
+     process.exit(1);
+});

@@ -27,7 +27,7 @@ const ergastF1ApiUrl = 'https://ergast.com/api/f1';
  * Gets the current session information using the API.
  *
  * @since 1.0.0
- * @param {callback} callback
+ * @param {callback} callback request callback
  */
 function getCurrentSessionInfo(callback) {
      request(`${liveTimingApiUrl}/SessionInfo.json`, (err, res, body) => {
@@ -44,15 +44,15 @@ function getCurrentSessionInfo(callback) {
                callback(err, null);
           }
      });
-};
+}
 
 /**
  * Session results.
  *
  * Gets the specified session results.
  *
- * @param {*} Session info object
- * @param {callback} callback
+ * @param {*} sessionInfoObject Session info object
+ * @param {callback} callback request callback
  */
 function getSessionResults(sessionInfoObject, callback) {
      request(`${liveTimingApiUrl}/${sessionInfoObject.Path}SPFeed.json`, (err, res, body) => {
@@ -68,7 +68,7 @@ function getSessionResults(sessionInfoObject, callback) {
           } catch (err) {
                callback(err, null);
           }
-     })
+     });
 }
 
 /**
@@ -76,18 +76,18 @@ function getSessionResults(sessionInfoObject, callback) {
  *
  * Gets the info about the current event.
  *
- * @param {*} callback
+ * @param {*} callback request callback
  */
 function getEventInfo(callback) {
      if (!process.env.F1_API_KEY) {
-          callback(`'F1_API_KEY' env var is missing`, null);
+          callback(new Error(`'F1_API_KEY' env var is missing`), null);
           return;
      }
 
      request(`${f1ApiUrl}/v1/event-tracker`, {
           headers: {
                apikey: process.env.F1_API_KEY,
-               locale: 'en',
+               locale: 'en'
           }
      }, (err, res, body) => {
           if (err) {
@@ -103,14 +103,14 @@ function getEventInfo(callback) {
                callback(err, null);
           }
      });
-};
+}
 
 /**
  * Circuit info.
  *
  * Gets info of all F1 circuits.
  *
- * @param {*} callback
+ * @param {*} callback request callback
  */
 function getCircuitInfo(callback) {
      request(`${ergastF1ApiUrl}/circuits.json`, (err, res, body) => {
@@ -126,7 +126,7 @@ function getCircuitInfo(callback) {
           } catch (err) {
                callback(err, null);
           }
-     })
+     });
 }
 
 module.exports = {
@@ -134,4 +134,4 @@ module.exports = {
      getSessionResults: getSessionResults,
      getEventInfo: getEventInfo,
      getCircuitInfo: getCircuitInfo
-}
+};

@@ -1,15 +1,12 @@
 🏎 <b>{{sessionInfo.race.meetingOfficialName.toUpperCase()}}</b> 🏎
 
-<b>🇺🇸 {{sessionInfo.description.toUpperCase()}} IN {{Math.floor(sessionInfo.msToGo / 60000)}} MINUTES 🇺🇸</b>
-<b>🇪🇸 {{translate('es-ES', sessionInfo.description).toUpperCase()}} EN {{Math.floor(sessionInfo.msToGo / 60000)}} MINUTOS 🇪🇸</b>
+<b>🇺🇸 {{sessionInfo.description.toUpperCase()}} STARTS IN {{Math.floor(sessionInfo.msToGo / 60000)}} MINUTES 🇺🇸</b>
+<b>🇪🇸 {{translate('es-ES', sessionInfo.description).toUpperCase()}} EMPIEZA EN {{Math.floor(sessionInfo.msToGo / 60000)}} MINUTOS 🇪🇸</b>
 
 
 <b>ℹ️ INFO ℹ️</b>
 
 <b>🇺🇸 English / Inglés 🇺🇸:</b>
-
-<b>Start Date:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-EN', { dateStyle: 'short', timeStyle: 'full', timeZone: 'America/Cancun' })}}
-<b>End Date:</b> {{new Date(`${sessionInfo.endTime}${sessionInfo.gmtOffset}`).toLocaleString('en-EN', { dateStyle: 'short', timeStyle: 'full', timeZone: 'America/Cancun' })}}
 
 <b>- Weather Report -</b>
 {{weather.getEmojiForWeatherCode(sessionInfo.WeatherReport.en.weather[0].id)}} <b>There's {{sessionInfo.WeatherReport.en.weather[0].description}}</b>
@@ -19,9 +16,6 @@
 
 
 <b>🇪🇸 Español / Spanish 🇪🇸:</b>
-
-<b>Fecha de inicio:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'full', timeZone: 'Europe/Madrid' })}}
-<b>Fecha de fin:</b> {{new Date(`${sessionInfo.endTime}${sessionInfo.gmtOffset}`).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'full', timeZone: 'Europe/Madrid' })}}
 
 <b>- Clima actual -</b>
 {{weather.getEmojiForWeatherCode(sessionInfo.WeatherReport.es.weather[0].id)}} <b>Hay {{sessionInfo.WeatherReport.es.weather[0].description}}</b>

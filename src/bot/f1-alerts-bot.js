@@ -48,8 +48,8 @@ let page = null;
  *
  * Gets the weather report for the specified session
  *
- * @param {*} sessionInfo
- * @param {callback} callback
+ * @param {*} sessionInfo session info object
+ * @param {callback} callback request callback
  */
 function getSessionWeatherReport(sessionInfo, callback) {
      var weatherReport = { };
@@ -58,12 +58,12 @@ function getSessionWeatherReport(sessionInfo, callback) {
      // Sadly we will need to make two calls to get the info translated
      weatherApi.getWeatherDataAt(sessionInfo.race.meetingLocalityName, sessionInfo.race.meetingCountryName, 'en', 'imperial', (err, res) => {
           if (err) {
-               callback(err, null)
+               callback(err, null);
                return;
           }
 
           if (!res.weather || !res.main || !res.wind) {
-               callback('No weather data', null);
+               callback(new Error('No weather data'), null);
                return;
           }
 
@@ -76,7 +76,7 @@ function getSessionWeatherReport(sessionInfo, callback) {
                }
 
                if (!res.weather || !res.main || !res.wind) {
-                    callback('No weather data', null);
+                    callback(new Error('No weather data'), null);
                     return;
                }
 
@@ -84,7 +84,25 @@ function getSessionWeatherReport(sessionInfo, callback) {
                callback(null, weatherReport);
           });
      });
-};
+}
+
+/**
+ * Session schedule displaying.
+ *
+ * Sends a message to the channel containing the next session schedule.
+ *
+ * @since 1.0.0
+ * @param {*} sessionInfo session info object
+ */
+async function displaySessionScheduleMessage(sessionInfo) {
+     try {
+          await botInstance.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionSchedule', sessionInfo), {
+               parse_mode: 'HTML'
+          });
+     } catch (err) {
+          logger.error(`Error while sending message: ${err.toString()}`);
+     }
+}
 
 /**
  * Session info displaying.
@@ -92,14 +110,14 @@ function getSessionWeatherReport(sessionInfo, callback) {
  * Sends a message to the channel containing the incoming session info.
  *
  * @since 1.0.0
- * @param {*} sessionInfo
+ * @param {*} sessionInfo session info object
  */
 function displayIncomingSessionInfoMessage(sessionInfo) {
      var displayWeatherReport = true;
 
      // Try to get the weather report if we can get the circuit's locality
      f1api.getCircuitInfo((err, circuitInfo) => {
-          if (err || !circuitInfo.MRData.CircuitTable || !circuitInfo.MRData.CircuitTable.Circuits) {
+          if (err || !circuitInfo.MRData || !circuitInfo.MRData.CircuitTable || !circuitInfo.MRData.CircuitTable.Circuits) {
                if (err) {
                     logger.error(`Error while getting circuit info: ${err.toString()}`);
                }
@@ -109,7 +127,7 @@ function displayIncomingSessionInfoMessage(sessionInfo) {
 
           // Look for the locality
           if (displayWeatherReport) {
-               for (var i = 0; circuitInfo.MRData.CircuitTable.Circuits.length; i++) {
+               for (let i = 0; circuitInfo.MRData.CircuitTable.Circuits.length; i++) {
                     if (circuitInfo.MRData.CircuitTable.Circuits[i].Location.country === sessionInfo.race.meetingCountryName) {
                          sessionInfo.race.meetingLocalityName = circuitInfo.MRData.CircuitTable.Circuits[i].Location.locality;
                          break;
@@ -148,7 +166,7 @@ function displayIncomingSessionInfoMessage(sessionInfo) {
                }
           });
      });
-};
+}
 
 /**
  * Session results displaying.
@@ -156,7 +174,7 @@ function displayIncomingSessionInfoMessage(sessionInfo) {
  * Sends an image to the channel containing the results of the session.
  *
  * @since 1.0.0
- * @param {*} sessionResults
+ * @param {*} sessionResults session results object
  */
 async function displaySessionResultsMessage(sessionResults) {
      // Send results alert message
@@ -183,10 +201,10 @@ async function displaySessionResultsMessage(sessionResults) {
      }
 
      // Build the standings table
-     for (var i = 0; i < driverStandingsData.length; i++) {
-          for (var j = 0; j < driverStandingsData.length; j++) {
+     for (let i = 0; i < driverStandingsData.length; i++) {
+          for (let j = 0; j < driverStandingsData.length; j++) {
                if ((i + 1).toString() === driverStandingsData[j].F[3]) {
-                    var driverEntry = `${driverStandingsData[j].F[3].padStart(2)}  `;
+                    let driverEntry = `${driverStandingsData[j].F[3].padStart(2)}  `;
                     driverEntry += `${driverStandingsData[j].F[0]}  `;
                     driverEntry += `${driverStandingsData[j].F[1]}  `;
                     driverEntry += `${driverStandingsData[j].F[4]}`;
@@ -208,7 +226,7 @@ async function displaySessionResultsMessage(sessionResults) {
           }
 
           await page.setContent(`<center><pre id="standings" style="display: inline-block;">${driverStandingsText}</pre></center>`);
-          const standingsElement = await page.$("#standings");
+          const standingsElement = await page.$('#standings');
           const standingsBoundaries = await standingsElement.boundingBox();
 
           var standingsPhoto = await page.screenshot({
@@ -216,7 +234,7 @@ async function displaySessionResultsMessage(sessionResults) {
                     x: standingsBoundaries.x,
                     y: standingsBoundaries.y,
                     width: Math.min(standingsBoundaries.width, page.viewport().width),
-                    height: Math.min(standingsBoundaries.height, page.viewport().height),
+                    height: Math.min(standingsBoundaries.height, page.viewport().height)
                }
           });
 
@@ -230,7 +248,7 @@ async function displaySessionResultsMessage(sessionResults) {
                logger.error(`Error while sending photo: ${err.toString()}`);
           }
      })();
-};
+}
 
 module.exports = {
      /**
@@ -264,9 +282,14 @@ module.exports = {
           }
 
           // Query event info for incoming session messages
-          f1api.getEventInfo((err, eventInfo) => {
+          f1api.getEventInfo(async (err, eventInfo) => {
                if (err) {
                     logger.error(`Error while getting event info: ${err.toString()}`);
+                    return;
+               }
+
+               if (!eventInfo.seasonContext || !eventInfo.seasonContext.timetables || !eventInfo.race) {
+                    logger.error('Error while getting event info: No event info');
                     return;
                }
 
@@ -276,35 +299,77 @@ module.exports = {
                if (sessionAlertsStatus === null) {
                     sessionAlertsStatus = [];
 
-                    for (var i = 0; i < timetables.length; i++){
+                    // Logical order of the sessions
+                    const sessionOrder = [
+                         'p1',
+                         'p2',
+                         'p3',
+                         'q',
+                         'r'
+                    ];
+
+                    for (let i = 0; i < timetables.length; i++) {
+                         let prevSessionIdx = -1;
+
+                         for (let j = 0; j < sessionOrder.length; j++) {
+                              if (sessionOrder[j] === timetables[i].session) {
+                                   prevSessionIdx = j === 0 ? -1 : j - 1;
+                              }
+                         }
+
                          sessionAlertsStatus.push({
                               description: timetables[i].description,
                               alertSent: false,
-                              resultsShown: false
+                              scheduleSent: false,
+                              // Prevent showing results when launching the bot for the first time...
+                              // ... if the session is already complete
+                              resultsShown: timetables[i].state === 'completed',
+                              prevSessionIdx: prevSessionIdx
                          });
                     }
                }
 
                // Loop through the timetables and show alerts for the incoming sessions
-               for (var i = 0; i < timetables.length; i++) {
+               for (let i = 0; i < timetables.length; i++) {
                     if (timetables[i].state === 'completed') {
                          sessionAlertsStatus[i].alertSent = false;
+                         sessionAlertsStatus[i].scheduleSent = false;
                          continue;
                     }
 
-                    // Reset results shown status
-                    sessionAlertsStatus[i].resultsShown = false
+                    // Reset results shown status and update description
+                    sessionAlertsStatus[i].resultsShown = false;
+                    sessionAlertsStatus[i].description = timetables[i].description;
 
-                    if (sessionAlertsStatus[i].alertSent) {
-                         continue;
-                    }
-
+                    // Get time diff until session start
                     var currentDate = new Date();
                     var startTime = new Date(`${timetables[i].startTime}${timetables[i].gmtOffset}`);
                     var msDifference = startTime.getTime() - currentDate.getTime();
 
-                    if (msDifference <= process.env.ALERT_TIME_AHEAD && msDifference > 0) {
-                         var sessionInfo = timetables[i];
+                    // Session schedule alert
+                    if (!sessionAlertsStatus[i].scheduleSent) {
+                         // Only show the schedule if the results for the previous session were shown
+                         var prevSessionCompleted = true;
+
+                         if (sessionAlertsStatus[i].prevSessionIdx === -1 ||
+                              !sessionAlertsStatus[sessionAlertsStatus[i].prevSessionIdx].resultsShown) {
+                              prevSessionCompleted = false;
+                         }
+
+                         if (prevSessionCompleted && msDifference <= process.env.SESSION_TIMES_ALERT_TIME_AHEAD && msDifference > 0) {
+                              let sessionInfo = timetables[i];
+                              sessionInfo.race = eventInfo.race;
+                              sessionInfo.msToGo = msDifference;
+
+                              logger.info(`Sending incoming session schedule (${sessionInfo.race.meetingOfficialName} - ${timetables[i].description})`);
+                              await displaySessionScheduleMessage(sessionInfo);
+                              sessionAlertsStatus[i].scheduleSent = true;
+                         }
+                    }
+
+                    // Session info alert
+                    if (!sessionAlertsStatus[i].alertSent && msDifference <= process.env.ALERT_TIME_AHEAD && msDifference > 0) {
+                         let sessionInfo = timetables[i];
                          sessionInfo.race = eventInfo.race;
                          sessionInfo.msToGo = msDifference;
 
@@ -315,15 +380,21 @@ module.exports = {
                }
           });
 
+          // Query session info for result messages
           f1api.getCurrentSessionInfo((err, sessionInfo) => {
                if (err) {
                     logger.error(`Error while getting session info: ${err.toString()}`);
                     return;
                }
 
+               if (!sessionInfo.ArchiveStatus || !sessionInfo.Meeting || !sessionInfo.Meeting.Circuit) {
+                    logger.error('Error while getting session info: No session info');
+                    return;
+               }
+
                // Show results if the session is completed
                if (sessionInfo.ArchiveStatus.Status === 'Complete' && sessionAlertsStatus !== null) {
-                    for (var i = 0; i < sessionAlertsStatus.length; i++) {
+                    for (let i = 0; i < sessionAlertsStatus.length; i++) {
                          if (sessionInfo.Name === sessionAlertsStatus[i].description && !sessionAlertsStatus[i].resultsShown) {
                               f1api.getSessionResults(sessionInfo, async (err, sessionResults) => {
                                    if (err) {

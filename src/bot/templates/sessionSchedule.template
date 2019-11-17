@@ -1,0 +1,46 @@
+🏎 <b>{{sessionInfo.race.meetingOfficialName.toUpperCase()}}</b> 🏎
+
+<b>🇺🇸 {{sessionInfo.description.toUpperCase()}} - SCHEDULE 🇺🇸</b>
+<b>🇪🇸 {{translate('es-ES', sessionInfo.description).toUpperCase()}} - HORARIO 🇪🇸</b>
+
+<b>ℹ️ INFO ℹ️</b>
+
+<b>- North America -</b>
+<b>🇨🇦 Vancouver:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-CA', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Vancouver' })}}
+<b>🇨🇦 Montreal:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-CA', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Montreal' })}}
+<b>🇺🇸 Austin:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Chicago' })}}
+<b>🇺🇸 Los Angeles:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Los_Angeles' })}}
+
+<b>- South America -</b>
+<b>🇲🇽 Mexico City:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Mexico_City' })}}
+<b>🇧🇷 Sao Paulo:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Sao_Paulo' })}}
+
+<b>- Europe -</b>
+<b>🇸🇪 Stockholm:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('sv-SE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Stockholm' })}}
+<b>🇫🇮 Helsinki:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('fi-FI', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Helsinki' })}}
+<b>🇲🇨 Monaco:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('fr-MC', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Monaco' })}}
+<b>🇷🇺 Moscow:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Moscow' })}}
+<b>🇬🇧 London:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-EN', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/London' })}}
+<b>🇮🇹 Italy:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Rome' })}}
+<b>🇫🇷 France:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Paris' })}}
+<b>🇪🇸 Spain:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Madrid' })}}
+
+<b>- Africa -</b>
+<b>🇳🇬 Lagos:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-ZA', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Africa/Lagos' })}}
+<b>🇿🇦 Johannesburg:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-ZA', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Africa/Johannesburg' })}}
+
+<b>- Asia -</b>
+<b>🇧🇭 Sakhir:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('ar-BH', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Bahrain' })}}
+<b>🇦🇪 Yas Marina:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('ar-AE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Dubai' })}}
+<b>🇮🇳 New Delhi:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('as-IN', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Kolkata' })}}
+<b>🇨🇳 Shanghai:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('zh-CN', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Shanghai' })}}
+<b>🇰🇷 Seoul:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Seoul' })}}
+<b>🇯🇵 Tokyo:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('jp-JP', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Tokyo' })}}
+<b>🇲🇾 Kuala Lumpur:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('ms-MY', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Kuala_Lumpur' })}}
+<b>🇸🇬 Singapore:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('zh-SG', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Singapore' })}}
+<b>🇮🇩 Jakarta:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('id-IDd', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Jakarta' })}}
+
+<b>- Australia -</b>
+<b>🇦🇺 Perth:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-AU', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Australia/Perth' })}}
+<b>🇦🇺 Melbourne:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-AU', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Australia/Melbourne' })}}
+<b>🇳🇿 Wellington:</b> {{new Date(`${sessionInfo.startTime}${sessionInfo.gmtOffset}`).toLocaleString('en-AU', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Pacific/Auckland' })}}

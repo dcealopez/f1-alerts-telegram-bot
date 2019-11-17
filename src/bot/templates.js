@@ -36,7 +36,7 @@ function load() {
           return;
      }
 
-     for (var i = 0; i < templateFiles.length; i++) {
+     for (let i = 0; i < templateFiles.length; i++) {
           if (!(/\.template$/).test(templateFiles[i])) {
                logger.warn(`${templateFiles[i]} is not a valid template file`);
                continue;
@@ -44,7 +44,7 @@ function load() {
 
           try {
                var templateData = fs.readFileSync(path.join('./src/bot/templates', templateFiles[i]), { encoding: 'utf-8' });
-               var templateName = templateFiles[i].replace('.template', '')
+               var templateName = templateFiles[i].replace('.template', '');
                templates.push({ templateName, templateData });
                logger.info(`Loaded template '${templateName}'`);
           } catch (err) {
@@ -69,7 +69,7 @@ function render(templateName, /* data object will be passed here as the second p
 
      var templateToRender = null;
 
-     for (var i = 0; i < templates.length; i++) {
+     for (let i = 0; i < templates.length; i++) {
           if (templates[i].templateName === templateName) {
                templateToRender = templates[i].templateData;
                break;
@@ -77,7 +77,7 @@ function render(templateName, /* data object will be passed here as the second p
      }
 
      if (!templateToRender) {
-          return "ERR_UNKNOWN_TEMPLATE";
+          return 'ERR_UNKNOWN_TEMPLATE';
      }
 
      // Measure the time taken to render the template
@@ -89,7 +89,7 @@ function render(templateName, /* data object will be passed here as the second p
      var matches = templateToRender.match(/(\{\{(.*?)\}\})/g);
 
      // Evaluate and replace it with the evaluated values
-     for (var i = 0; i < matches.length; i++) {
+     for (let i = 0; i < matches.length; i++) {
           var js = matches[i].substr(2, matches[i].length);
           js = js.substr(0, js.length - 2);
           js = js.replace(/(sessionInfo.)|(sessionResults.)/g, 'arguments[1].');
@@ -106,5 +106,5 @@ function render(templateName, /* data object will be passed here as the second p
 
 module.exports = {
      load: load,
-     render: render,
+     render: render
 };
