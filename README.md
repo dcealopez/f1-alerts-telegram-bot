@@ -5,11 +5,15 @@
 
 This bot displays alerts for the FIA Formula 1 Championship on Telegram.
 
-**Official Telegram channel:** https://t.me/f1alerts
-
 The official Formula 1 web API (free) is used alongside the [Open Weather Map API](https://openweathermap.org/) to fetch the event information used to display the alerts.
 
 The [Ergast API](http://ergast.com/mrd/) is also used to fetch information about the driver and constructor standings.
+
+All the circuit layout images were taken from the public Wikipedia page for each circuit.
+
+-
+
+**Official Telegram channel:** https://t.me/f1alerts
 
 ### Features
 
@@ -18,7 +22,7 @@ The [Ergast API](http://ergast.com/mrd/) is also used to fetch information about
 - Sends reminder alerts for incoming sessions.
 - Shows the weather report of the circuit for incoming sessions.
 - Generates and sends photos for the results of each session.
-- Displays updated driver and constructor standings after each Grand Prix.
+- Displays updated driver and constructor standings after each race.
 
 ### Configuration
 
