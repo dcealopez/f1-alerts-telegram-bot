@@ -90,7 +90,7 @@ Here is an example configuration:
 }
 ```
 
-###Images
+### Images
 
 Session schedule alert:
 
