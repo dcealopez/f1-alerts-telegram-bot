@@ -127,7 +127,9 @@ async function displaySessionScheduleMessage(sessionInfo) {
  * @param {*} sessionInfo session info object
  */
 async function displayIncomingSessionInfoMessage(sessionInfo) {
-     // Display the weather report too if possible
+     var displaySimpleInfo = true;
+
+     // Display the weather report if possible
      if (countryCircuits[sessionInfo.race.meetingCountryName] && countryCircuits[sessionInfo.race.meetingCountryName].locality) {
           sessionInfo.race.meetingLocalityName = countryCircuits[sessionInfo.race.meetingCountryName].locality;
 
@@ -139,6 +141,7 @@ async function displayIncomingSessionInfoMessage(sessionInfo) {
                }
 
                sessionInfo.WeatherReport = weatherReport;
+               displaySimpleInfo = false;
 
                try {
                     await botInstance.telegram.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionInfoPlusWeather', sessionInfo), {
@@ -148,17 +151,17 @@ async function displayIncomingSessionInfoMessage(sessionInfo) {
                     logger.error(`Error while sending message: ${err.toString()}`);
                }
           });
-
-          return;
      }
 
      // Display simplified info if we couldn't get the weather report
-     try {
-          await botInstance.telegram.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionInfo', sessionInfo), {
-               parse_mode: 'HTML'
-          });
-     } catch (err) {
-          logger.error(`Error while sending message: ${err.toString()}`);
+     if (displaySimpleInfo) {
+          try {
+               await botInstance.telegram.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionInfo', sessionInfo), {
+                    parse_mode: 'HTML'
+               });
+          } catch (err) {
+               logger.error(`Error while sending message: ${err.toString()}`);
+          }
      }
 }
 
