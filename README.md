@@ -11,8 +11,6 @@ The [Ergast API](http://ergast.com/mrd/) is also used to fetch information about
 
 All the circuit layout images were taken from the public Wikipedia page for each circuit.
 
--
-
 **Official Telegram channel:** https://t.me/f1alerts
 
 ### Features
