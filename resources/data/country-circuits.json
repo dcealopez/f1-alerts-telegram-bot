@@ -1,0 +1,107 @@
+{
+     "Australia": {
+          "name": "Albert Park Grand Prix Circuit",
+          "layoutImage": "albert_park.png",
+          "locality": "Melbourne"
+     },
+     "United States": {
+          "name": "Circuit of the Americas",
+          "layoutImage": "austin.png",
+          "locality": "Austin"
+     },
+     "Bahrain": {
+          "name": "Bahrain International Circuit",
+          "layoutImage": "bahrain.png",
+          "locality": "Sakhir"
+     },
+     "Azerbaijan": {
+          "name": "Baku City Circuit",
+          "layoutImage": "baku.png",
+          "locality": "Baku"
+     },
+     "Spain": {
+          "name": "Circuit de Barcelona-Catalunya",
+          "layoutImage": "catalunya.png",
+          "locality": "Montmeló"
+     },
+     "Germany": {
+          "name": "Hockenheimring",
+          "layoutImage": "hockenheim.png",
+          "locality": "Hockenheim"
+     },
+     "Hungary": {
+          "name": "Hungaroring",
+          "layoutImage": "hungaroring.png",
+          "locality": "Budapest"
+     },
+     "Brazil": {
+          "name": "Autódromo José Carlos Pace",
+          "layoutImage": "interlagos.png",
+          "locality": "São Paulo"
+     },
+     "Singapore": {
+          "name": "Marina Bay Street Circuit",
+          "layoutImage": "marina_bay.png",
+          "locality": "Marina Bay"
+     },
+     "Monaco":{
+          "name": "Circuit de Monaco",
+          "layoutImage": "monte_carlo.png",
+          "locality": "Monte-Carlo"
+     },
+     "Italy": {
+          "name": "Autodromo Nazionale di Monza",
+          "layoutImage": "monza.png",
+          "locality": "Monza"
+     },
+     "Austria": {
+          "name": "Red Bull Ring",
+          "layoutImage": "red_bull_ring.png",
+          "locality": "Spielburg"
+     },
+     "France": {
+          "name": "Circuit Paul Ricard",
+          "layoutImage": "paul_ricard.png",
+          "locality": "Le Castellet"
+     },
+     "Mexico": {
+          "name": "Autódromo Hermanos Rodríguez",
+          "layoutImage": "hermanos_rodriguez.png",
+          "locality": "Mexico City"
+     },
+     "China": {
+          "name": "Shanghai International Circuit",
+          "layoutImage": "shanghai.png",
+          "locality": "Shanghai"
+     },
+     "United Kingdom": {
+          "name": "Silverstone Circuit",
+          "layoutImage": "silverstone.png",
+          "locality": "Silverstone"
+     },
+     "Russia": {
+          "name": "Sochi Autodrom",
+          "layoutImage": "sochi.png",
+          "locality": "Sochi"
+     },
+     "Belgium": {
+          "name": "Circuit de Spa-Francorchamps",
+          "layoutImage": "spa.png",
+          "locality": "Spa"
+     },
+     "Japan": {
+          "name": "Suzuka Circuit",
+          "layoutImage": "suzuka.png",
+          "locality": "Suzuka"
+     },
+     "Canada": {
+          "name": "Circuit Gilles Villeneuve",
+          "layoutImage": "gilles_villeneuve.png",
+          "locality": "Montreal"
+     },
+     "United Arab Emirates":{
+          "name": "Yas Marina Circuit",
+          "layoutImage": "yas_island.png",
+          "locality": "Abu Dhabi"
+     }
+}

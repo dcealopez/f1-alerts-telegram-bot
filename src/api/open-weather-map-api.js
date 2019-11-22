@@ -78,11 +78,12 @@ function getWeatherDataAt(city, country, lang, units, callback) {
 
           try {
                var parsedData = JSON.parse(body);
-
-               callback(null, parsedData);
           } catch(err) {
                callback(err, null);
+               return;
           }
+
+          callback(null, parsedData);
      });
 }
 

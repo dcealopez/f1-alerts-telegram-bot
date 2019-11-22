@@ -1,7 +1,7 @@
-🏎 <b>{{sessionInfo.race.meetingOfficialName.toUpperCase()}}</b> 🏎
+🏎 {{utils.countryNameToEmoji(`${templateData.race.meetingCountryName}`)}} <b>{{templateData.race.meetingOfficialName.toUpperCase()}}</b> {{utils.countryNameToEmoji(`${templateData.race.meetingCountryName}`)}} 🏎
 
-<b>🇺🇸 {{sessionInfo.description.toUpperCase()}} STARTS IN {{Math.floor(sessionInfo.msToGo / 60000)}} MINUTES 🇺🇸</b>
-<b>🇪🇸 {{translate('es-ES', sessionInfo.description).toUpperCase()}} EMPIEZA EN {{Math.floor(sessionInfo.msToGo / 60000)}} MINUTOS 🇪🇸</b>
+<b>🇺🇸 {{templateData.description.toUpperCase()}} STARTS IN {{Math.floor(templateData.msToGo / 60000)}} MINUTES 🇺🇸</b>
+<b>🇪🇸 {{translate('es-ES', templateData.description).toUpperCase()}} EMPIEZA EN {{Math.floor(templateData.msToGo / 60000)}} MINUTOS 🇪🇸</b>
 
 
 <b>ℹ️ INFO ℹ️</b>
@@ -9,16 +9,16 @@
 <b>🇺🇸 English / Inglés 🇺🇸:</b>
 
 <b>- Weather Report -</b>
-{{weather.getEmojiForWeatherCode(sessionInfo.WeatherReport.en.weather[0].id)}} <b>There's {{sessionInfo.WeatherReport.en.weather[0].description}}</b>
-<b>🌡 Temperature:</b> {{sessionInfo.WeatherReport.en.main.temp}} °F
-<b>🌬 Wind:</b> {{sessionInfo.WeatherReport.en.wind.speed}} mph
-<b>💧 Humidity:</b> {{sessionInfo.WeatherReport.en.main.humidity}}%
+{{weather.getEmojiForWeatherCode(templateData.WeatherReport.en.weather[0].id)}} <b>There's {{templateData.WeatherReport.en.weather[0].description}}</b>
+<b>🌡 Temperature:</b> {{templateData.WeatherReport.en.main.temp}} °F
+<b>🌬 Wind:</b> {{templateData.WeatherReport.en.wind.speed}} mph
+<b>💧 Humidity:</b> {{templateData.WeatherReport.en.main.humidity}}%
 
 
 <b>🇪🇸 Español / Spanish 🇪🇸:</b>
 
 <b>- Clima actual -</b>
-{{weather.getEmojiForWeatherCode(sessionInfo.WeatherReport.es.weather[0].id)}} <b>Hay {{sessionInfo.WeatherReport.es.weather[0].description}}</b>
-<b>🌡 Temperatura:</b> {{sessionInfo.WeatherReport.es.main.temp}} ℃
-<b>🌬 Viento:</b> {{sessionInfo.WeatherReport.es.wind.speed}} m/s
-<b>💧 Humedad:</b> {{sessionInfo.WeatherReport.es.main.humidity}}%
+{{weather.getEmojiForWeatherCode(templateData.WeatherReport.es.weather[0].id)}} <b>Hay {{templateData.WeatherReport.es.weather[0].description}}</b>
+<b>🌡 Temperatura:</b> {{templateData.WeatherReport.es.main.temp}} ℃
+<b>🌬 Viento:</b> {{templateData.WeatherReport.es.wind.speed}} m/s
+<b>💧 Humedad:</b> {{templateData.WeatherReport.es.main.humidity}}%

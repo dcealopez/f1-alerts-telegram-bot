@@ -12,6 +12,7 @@ const fs = require('fs');
 const { performance } = require('perf_hooks');
 const translate = require('./translate/translate');
 const weather = require('../api/open-weather-map-api');
+const utils = require('../utils');
 
 // Logger for this file
 const logger = require('log4js').getLogger();
@@ -92,7 +93,7 @@ function render(templateName, /* data object will be passed here as the second p
      for (let i = 0; i < matches.length; i++) {
           var js = matches[i].substr(2, matches[i].length);
           js = js.substr(0, js.length - 2);
-          js = js.replace(/(sessionInfo.)|(sessionResults.)/g, 'arguments[1].');
+          js = js.replace(/(templateData.)/g, 'arguments[1].');
 
           templateToRender = templateToRender.replace(matches[i], eval(js));
      }

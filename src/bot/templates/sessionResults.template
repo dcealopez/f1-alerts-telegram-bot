@@ -1,6 +1,6 @@
-🏎 <b>{{sessionResults.free.data.R}}</b> 🏎
+🏎 {{utils.countryNameToEmoji(`${templateData.countryName}`)}} <b>{{templateData.free.data.R}}</b> {{utils.countryNameToEmoji(`${templateData.countryName}`)}} 🏎
 
-<b>🇺🇸 {{sessionResults.free.data.S.toUpperCase()}} RESULTS 🇺🇸</b>
-<b>🇪🇸 RESULTADOS DE {{translate('es-ES', sessionResults.free.data.S).toUpperCase()}} 🇪🇸</b>
+<b>🇺🇸 {{templateData.free.data.S.toUpperCase()}} RESULTS 🇺🇸</b>
+<b>🇪🇸 RESULTADOS DE {{translate('es-ES', templateData.free.data.S).toUpperCase()}} 🇪🇸</b>
 
 ℹ️⬇️⬇️⬇️⬇️⬇️⬇️ℹ️

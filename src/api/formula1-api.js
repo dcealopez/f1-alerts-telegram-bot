@@ -38,11 +38,12 @@ function getCurrentSessionInfo(callback) {
 
           try {
                var parsedData = JSON.parse(body.trim());
-
-               callback(null, parsedData);
           } catch (err) {
                callback(err, null);
+               return;
           }
+
+          callback(null, parsedData);
      });
 }
 
@@ -63,11 +64,12 @@ function getSessionResults(sessionInfoObject, callback) {
 
           try {
                var parsedData = JSON.parse(body.trim());
-
-               callback(null, parsedData);
           } catch (err) {
                callback(err, null);
+               return;
           }
+
+          callback(null, parsedData);
      });
 }
 
@@ -97,23 +99,24 @@ function getEventInfo(callback) {
 
           try {
                var parsedData = JSON.parse(body);
-
-               callback(null, parsedData);
           } catch (err) {
                callback(err, null);
+               return;
           }
+
+          callback(null, parsedData);
      });
 }
 
 /**
- * Circuit info.
+ * Query Ergast F1 API
  *
- * Gets info of all F1 circuits.
+ * Queries the Ergast F1 API.
  *
  * @param {*} callback request callback
  */
-function getCircuitInfo(callback) {
-     request(`${ergastF1ApiUrl}/circuits.json`, (err, res, body) => {
+function queryErgastF1Api(query, callback) {
+     request(`${ergastF1ApiUrl}/${query.replace(/\ /g, '/')}.json`, (err, res, body) => {
           if (err) {
                callback(err, null);
                return;
@@ -121,11 +124,12 @@ function getCircuitInfo(callback) {
 
           try {
                var parsedData = JSON.parse(body);
-
-               callback(null, parsedData);
           } catch (err) {
                callback(err, null);
+               return;
           }
+
+          callback(null, parsedData);
      });
 }
 
@@ -133,5 +137,5 @@ module.exports = {
      getCurrentSessionInfo: getCurrentSessionInfo,
      getSessionResults: getSessionResults,
      getEventInfo: getEventInfo,
-     getCircuitInfo: getCircuitInfo
+     queryErgastF1Api: queryErgastF1Api
 };

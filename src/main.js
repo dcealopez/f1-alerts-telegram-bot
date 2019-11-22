@@ -7,6 +7,9 @@
  * @since 1.0.0
  */
 
+// Save app base dir on a global variable
+global.__basedir = __dirname;
+
 // Load env variables config from .env
 require('dotenv').config();
 
@@ -39,11 +42,13 @@ let botLoopCronJob = null;
           await f1bot.init();
      } catch (err) {
           logger.fatal(err);
+          process.exit(1);
           return;
      }
 
      if (!process.env.TELEGRAM_CHANNEL_ID) {
           logger.fatal(`'TELEGRAM_CHANNEL_ID' env var is not defined`);
+          process.exit(1);
           return;
      }
 
@@ -53,24 +58,33 @@ let botLoopCronJob = null;
 
      if (!process.env.BOT_LOOP_CRON_TIME) {
           logger.fatal(`'BOT_LOOP_CRON_TIME' env var is not defined`);
+          process.exit(1);
           return;
      }
 
-     if (!process.env.ALERT_TIME_AHEAD) {
-          logger.fatal(`'ALERT_TIME_AHEAD' env var is not defined`);
+     if (!process.env.ALERT_TIME_AHEAD || isNaN(process.env.ALERT_TIME_AHEAD)) {
+          logger.fatal(`'ALERT_TIME_AHEAD' env var is not defined or is invalid or is invalid`);
+          process.exit(1);
           return;
      }
 
-     if (!process.env.SESSION_TIMES_ALERT_TIME_AHEAD) {
-          logger.fatal(`'SESSION_TIMES_ALERT_TIME_AHEAD' env var is not defined`);
+     if (!process.env.SESSION_TIMES_ALERT_TIME_AHEAD || isNaN(process.env.SESSION_TIMES_ALERT_TIME_AHEAD)) {
+          logger.fatal(`'SESSION_TIMES_ALERT_TIME_AHEAD' env var is not defined or is invalid`);
+          process.exit(1);
           return;
      }
 
-     logger.info(`Bot started for channel: ${process.env.TELEGRAM_CHANNEL_ID}`);
+     if (!process.env.TIME_STANDINGS_UPDATE_AFTER_RACE || isNaN(process.env.TIME_STANDINGS_UPDATE_AFTER_RACE)) {
+          logger.fatal(`'TIME_STANDINGS_UPDATE_AFTER_RACE' env var is not defined or is invalid`);
+          process.exit(1);
+          return;
+     }
 
      // Create and run the main bot loop cron job
      botLoopCronJob = new cron.CronJob(process.env.BOT_LOOP_CRON_TIME, f1bot.lookForUpdates);
      botLoopCronJob.start();
+
+     logger.info(`Bot started for channel: ${process.env.TELEGRAM_CHANNEL_ID}`);
 })();
 
 /**
