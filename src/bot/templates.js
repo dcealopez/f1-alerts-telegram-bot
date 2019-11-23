@@ -10,7 +10,7 @@
 const path = require('path');
 const fs = require('fs');
 const { performance } = require('perf_hooks');
-const translate = require('./translate/translate');
+const translate = require('./translate');
 const weather = require('../api/open-weather-map-api');
 const utils = require('../utils');
 
@@ -31,7 +31,7 @@ function load() {
      templates = [];
 
      try {
-          var templateFiles = fs.readdirSync('./src/bot/templates');
+          var templateFiles = fs.readdirSync('./resources/templates');
      } catch (err) {
           logger.error(`Error while loading templates: ${err.toString()}`);
           return;
@@ -44,7 +44,7 @@ function load() {
           }
 
           try {
-               var templateData = fs.readFileSync(path.join('./src/bot/templates', templateFiles[i]), { encoding: 'utf-8' });
+               var templateData = fs.readFileSync(path.join('./resources/templates', templateFiles[i]), { encoding: 'utf-8' });
                var templateName = templateFiles[i].replace('.template', '');
                templates.push({ templateName, templateData });
                logger.info(`Loaded template '${templateName}'`);

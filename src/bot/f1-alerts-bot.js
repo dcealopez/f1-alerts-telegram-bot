@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const f1api = require('../api/formula1-api');
 const weatherApi = require('../api/open-weather-map-api');
-const translate = require('./translate/translate');
+const translate = require('./translate');
 const templates = require('./templates');
 const utils = require('../utils');
 const countryCircuits = require('../../resources/data/country-circuits.json');
@@ -454,7 +454,7 @@ async function sendCircuitPhoto(country) {
           return;
      }
 
-     var imagePath = path.join(__basedir, '..', 'resources', 'images', 'circuits', countryCircuits[country].layoutImage);
+     var imagePath = `./resources/images/circuits/${countryCircuits[country].layoutImage}`;
 
      if (!fs.existsSync(imagePath)) {
           logger.error(`File not found: ${imagePath}`);
@@ -462,11 +462,20 @@ async function sendCircuitPhoto(country) {
      }
 
      try {
+          // Measure the time taken to send the photo
+          if (process.env.DEV_MODE)  {
+               var perfTimeStart = performance.now();
+          }
+
           await botInstance.telegram.sendPhoto(process.env.TELEGRAM_CHANNEL_ID, {
                source: fs.createReadStream(imagePath),
           }, {
                caption: `\u{1F3CE} ${utils.countryNameToEmoji(country)} ${countryCircuits[country].name} ${utils.countryNameToEmoji(country)} \u{1F3CE}`
           });
+
+          if (process.env.DEV_MODE)  {
+               logger.debug(`Circuit layout photo sent in ${performance.now() - perfTimeStart}ms`);
+          }
      } catch (err) {
           logger.error(`Error while sending photo: ${err.toString()}`);
      }
@@ -592,6 +601,7 @@ module.exports = {
 
                               // Send the circuit photo layout too (if it hasn't been sent before)
                               if (!wasCircuitPhotoSent) {
+                                   logger.info(`Sending circuit layout photo (${sessionInfo.race.meetingOfficialName} - ${timetables[i].description})`);
                                    await sendCircuitPhoto(eventInfo.race.meetingCountryName);
                                    wasCircuitPhotoSent = true;
                               }

@@ -7,9 +7,6 @@
  * @since 1.0.0
  */
 
-// Save app base dir on a global variable
-global.__basedir = __dirname;
-
 // Load env variables config from .env
 require('dotenv').config();
 

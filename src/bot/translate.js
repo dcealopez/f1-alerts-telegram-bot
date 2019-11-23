@@ -7,7 +7,7 @@
  * @since 1.0.0
  */
 
-const translations = require('./translations.json');
+const translations = require('../../resources/data/translations.json');
 
 /**
  * String translation.
