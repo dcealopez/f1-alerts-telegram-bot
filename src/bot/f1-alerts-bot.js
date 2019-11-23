@@ -12,7 +12,6 @@ const puppeteer = require('puppeteer');
 const { performance } = require('perf_hooks');
 const schedule = require('node-schedule');
 const fs = require('fs');
-const path = require('path');
 const f1api = require('../api/formula1-api');
 const weatherApi = require('../api/open-weather-map-api');
 const translate = require('./translate');
