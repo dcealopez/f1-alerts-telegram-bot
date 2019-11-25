@@ -17,7 +17,6 @@ const weatherApi = require('../api/open-weather-map-api');
 const translate = require('./translate');
 const templates = require('./templates');
 const utils = require('../utils');
-const countryCircuits = require('../../resources/data/country-circuits.json');
 
 // Logger for this file
 const logger = require('log4js').getLogger();
@@ -126,34 +125,10 @@ async function displaySessionScheduleMessage(sessionInfo) {
  * @param {*} sessionInfo session info object
  */
 async function displayIncomingSessionInfoMessage(sessionInfo) {
-     var displaySimpleInfo = true;
+     var circuitData = utils.getCircuitData(sessionInfo.race.meetingCountryName);
 
-     // Display the weather report if possible
-     if (countryCircuits[sessionInfo.race.meetingCountryName] && countryCircuits[sessionInfo.race.meetingCountryName].locality) {
-          sessionInfo.race.meetingLocalityName = countryCircuits[sessionInfo.race.meetingCountryName].locality;
-
-          getSessionWeatherReport(sessionInfo, async (err, weatherReport) => {
-               if (err) {
-                    logger.error(`Couldn't get weather data for session (${sessionInfo.race.meetingOfficialName} - ${sessionInfo.description})`);
-                    logger.error(err.toString());
-                    return;
-               }
-
-               sessionInfo.WeatherReport = weatherReport;
-               displaySimpleInfo = false;
-
-               try {
-                    await botInstance.telegram.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionInfoPlusWeather', sessionInfo), {
-                         parse_mode: 'HTML'
-                    });
-               } catch (err) {
-                    logger.error(`Error while sending message: ${err.toString()}`);
-               }
-          });
-     }
-
-     // Display simplified info if we couldn't get the weather report
-     if (displaySimpleInfo) {
+     // Display simple info if we can't get the weather report
+     if (!circuitData || !circuitData.locality || !circuitData.country) {
           try {
                await botInstance.telegram.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render('sessionInfo', sessionInfo), {
                     parse_mode: 'HTML'
@@ -161,7 +136,34 @@ async function displayIncomingSessionInfoMessage(sessionInfo) {
           } catch (err) {
                logger.error(`Error while sending message: ${err.toString()}`);
           }
+
+          return;
      }
+
+     // Try to get the weather report to display it
+     var templateToUse = 'sessionInfoPlusWeather';
+
+     sessionInfo.race.meetingLocalityName = circuitData.locality;
+     sessionInfo.race.meetingCountryName = circuitData.country;
+
+     getSessionWeatherReport(sessionInfo, async (err, weatherReport) => {
+          if (err) {
+               templateToUse = 'sessionInfo';
+
+               logger.error(`Couldn't get weather data for session (${sessionInfo.race.meetingOfficialName} - ${sessionInfo.description})`);
+               logger.error(err.toString());
+          }
+
+          sessionInfo.WeatherReport = weatherReport;
+
+          try {
+               await botInstance.telegram.sendMessage(process.env.TELEGRAM_CHANNEL_ID, templates.render(templateToUse, sessionInfo), {
+                    parse_mode: 'HTML'
+               });
+          } catch (err) {
+               logger.error(`Error while sending message: ${err.toString()}`);
+          }
+     });
 }
 
 /**
@@ -447,13 +449,15 @@ function displayDriversAndConstructorsStandings() {
  * @since 1.0.0
  * @param {string} country country name
  */
-async function sendCircuitPhoto(country) {
-     if (!countryCircuits[country] || !countryCircuits[country].layoutImage || !countryCircuits[country].name) {
-          logger.error(`No circuit found for country '${country}'`);
+async function sendCircuitPhoto(id) {
+     var circuitData = utils.getCircuitData(id);
+
+     if (!circuitData || !circuitData.layoutImage || !circuitData.name) {
+          logger.error(`No circuit data found with id '${id}'`);
           return;
      }
 
-     var imagePath = `./resources/images/circuits/${countryCircuits[country].layoutImage}`;
+     var imagePath = `./resources/images/circuits/${circuitData.layoutImage}`;
 
      if (!fs.existsSync(imagePath)) {
           logger.error(`File not found: ${imagePath}`);
@@ -469,7 +473,7 @@ async function sendCircuitPhoto(country) {
           await botInstance.telegram.sendPhoto(process.env.TELEGRAM_CHANNEL_ID, {
                source: fs.createReadStream(imagePath),
           }, {
-               caption: `\u{1F3CE} ${utils.countryNameToEmoji(country)} ${countryCircuits[country].name} ${utils.countryNameToEmoji(country)} \u{1F3CE}`
+               caption: `\u{1F3CE} ${utils.countryNameToEmoji(circuitData.country)} ${circuitData.name} ${utils.countryNameToEmoji(circuitData.country)} \u{1F3CE}`
           });
 
           if (process.env.DEV_MODE)  {

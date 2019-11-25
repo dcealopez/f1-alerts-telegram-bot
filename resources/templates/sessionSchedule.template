@@ -10,10 +10,14 @@
 <b>🇨🇦 Montreal:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('en-CA', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Montreal' })}}
 <b>🇺🇸 Austin:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Chicago' })}}
 <b>🇺🇸 Los Angeles:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Los_Angeles' })}}
+<b>🇲🇽 Mexico City:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Mexico_City' })}}
 
 <b>- South America -</b>
-<b>🇲🇽 Mexico City:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Mexico_City' })}}
-<b>🇧🇷 Sao Paulo:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Sao_Paulo' })}}
+<b>🇨🇱 Santiago:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-CL', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Santiago' })}}
+<b>🇵🇪 Lima:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Lima' })}}
+<b>🇻🇪 Caracas:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-VE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Caracas' })}}
+<b>🇧🇴 La Paz:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-BO', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/La_Paz' })}}
+<b>🇧🇷 Sao Paulo:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Sao_Paulo' })}}
 
 <b>- Europe -</b>
 <b>🇸🇪 Stockholm:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('sv-SE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Stockholm' })}}
