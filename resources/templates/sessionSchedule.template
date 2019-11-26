@@ -32,6 +32,8 @@
 <b>- Africa -</b>
 <b>🇳🇬 Lagos:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('en-ZA', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Africa/Lagos' })}}
 <b>🇿🇦 Johannesburg:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('en-ZA', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Africa/Johannesburg' })}}
+<b>🇸🇳 Dakar:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('fr-SN', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Africa/Dakar' })}}
+<b>🇰🇪 Nairobi:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('sw-KE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Africa/Nairobi' })}}
 
 <b>- Asia -</b>
 <b>🇧🇭 Sakhir:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('ar-BH', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Asia/Bahrain' })}}
