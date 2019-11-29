@@ -543,11 +543,17 @@ module.exports = {
                     ];
 
                     for (let i = 0; i < timetables.length; i++) {
+                         // Get the previous session index in the timetables for every session
                          let prevSessionIdx = -1;
 
                          for (let j = 0; j < sessionOrder.length; j++) {
-                              if (sessionOrder[j] === timetables[i].session) {
-                                   prevSessionIdx = j === 0 ? -1 : j - 1;
+                              if (timetables[i].session === sessionOrder[j] && j !== 0) {
+                                   for (let k = 0; k < timetables.length; k++) {
+                                        if (timetables[k].session == sessionOrder[j - 1]) {
+                                             prevSessionIdx = k;
+                                        }
+                                   }
+
                                    break;
                               }
                          }
@@ -568,6 +574,7 @@ module.exports = {
                // Loop through the timetables and show alerts for the incoming sessions
                for (let i = 0; i < timetables.length; i++) {
                     if (timetables[i].state === 'completed') {
+                         sessionAlertsStatus[i].state = timetables[i].state;
                          sessionAlertsStatus[i].alertSent = false;
                          sessionAlertsStatus[i].scheduleSent = false;
                          continue;
@@ -645,7 +652,7 @@ module.exports = {
                     return;
                }
 
-               // Show results if the session is completed (only if the previous session is completed)
+               // Show results if the session is completed
                if (sessionInfo.ArchiveStatus.Status === 'Complete' && sessionAlertsStatus !== null) {
                     for (let i = 0; i < sessionAlertsStatus.length; i++) {
                          if (sessionInfo.Name === sessionAlertsStatus[i].description
