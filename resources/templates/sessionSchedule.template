@@ -17,7 +17,8 @@
 <b>🇵🇪 Lima:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-PE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Lima' })}}
 <b>🇻🇪 Caracas:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-VE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Caracas' })}}
 <b>🇧🇴 La Paz:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-BO', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/La_Paz' })}}
-<b>🇧🇷 Sao Paulo:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Sao_Paulo' })}}
+<b>🇦🇷 Argentina:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Argentina/Buenos_Aires' })}}
+<b>🇧🇷 São Paulo:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Sao_Paulo' })}}
 
 <b>- Europe -</b>
 <b>🇸🇪 Stockholm:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('sv-SE', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Stockholm' })}}
