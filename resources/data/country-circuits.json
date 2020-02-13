@@ -145,5 +145,19 @@
           "layoutImage": "yas_island.png",
           "country": "United Arab Emirates",
           "locality": "Abu Dhabi"
+     },
+     {
+          "id": "Vietnam,Hanoi",
+          "name": "Hanoi Street Circuit",
+          "layoutImage": "hanoi.png",
+          "country": "Vietnam",
+          "locality": "Hanoi"
+     },
+     {
+          "id": "Netherlands,Holland",
+          "name": "Zandvoort",
+          "layoutImage": "zandvoort.png",
+          "country": "Netherlands",
+          "locality": "North Holland"
      }
 ]
