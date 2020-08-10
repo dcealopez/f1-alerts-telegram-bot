@@ -30,6 +30,12 @@ let sessionAlertsStatus = null;
 // Indicates whether the circuit layout photo was already sent or not
 let wasCircuitPhotoSent = false;
 
+// Sometimes the F1 API derps and goes back and forth changing the session status for the race session,
+// making the bot send duplicated session result alerts
+// So we will use this to prevent that by setting this to true when the race session results are set,
+// and will reset it when the grand prix name changes
+let allResultsSent = false;
+
 // Current Grand Prix name
 let currentGrandPrixName = null;
 
@@ -635,8 +641,9 @@ module.exports = {
                     currentGrandPrixName = eventInfo.race.meetingOfficialName;
                     logger.info(`Current Grand Prix: ${currentGrandPrixName}`);
 
-                    // Reset this flag when the grand prix name changes
+                    // Reset these flags when the grand prix name changes
                     wasCircuitPhotoSent = false;
+                    allResultsSent = false;
                }
           });
 
@@ -653,7 +660,7 @@ module.exports = {
                }
 
                // Show results if the session is completed
-               if (sessionInfo.ArchiveStatus.Status === 'Complete' && sessionAlertsStatus !== null) {
+               if (sessionInfo.ArchiveStatus.Status === 'Complete' && sessionAlertsStatus !== null && !allResultsSent) {
                     for (let i = 0; i < sessionAlertsStatus.length; i++) {
                          if (sessionInfo.Name === sessionAlertsStatus[i].description
                               && !sessionAlertsStatus[i].resultsShown && sessionAlertsStatus[i].state == 'completed') {
@@ -676,6 +683,10 @@ module.exports = {
 
                                         scheduleDate.setTime(scheduleDate.getTime() + parseInt(process.env.TIME_STANDINGS_UPDATE_AFTER_RACE));
                                         driversConstructorsStandingUpdateAlertScheduledJob = schedule.scheduleJob(scheduleDate, displayDriversAndConstructorsStandings);
+
+                                        // Fix to prevent sending duplicated race session results due to the F1 API
+                                        // being dumb
+                                        allResultsSent = true;
                                    }
                               });
 
