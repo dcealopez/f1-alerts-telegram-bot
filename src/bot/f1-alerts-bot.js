@@ -577,6 +577,16 @@ module.exports = {
                     }
                }
 
+               // Keep track of the current grand prix name
+               if (currentGrandPrixName !== eventInfo.race.meetingOfficialName) {
+                    currentGrandPrixName = eventInfo.race.meetingOfficialName;
+                    logger.info(`Current Grand Prix: ${currentGrandPrixName}`);
+
+                    // Reset these flags when the grand prix name changes
+                    wasCircuitPhotoSent = false;
+                    allResultsSent = false;
+               }
+
                // Loop through the timetables and show alerts for the incoming sessions
                for (let i = 0; i < timetables.length; i++) {
                     if (timetables[i].state === 'completed') {
@@ -634,16 +644,6 @@ module.exports = {
                          await displayIncomingSessionInfoMessage(sessionInfo);
                          sessionAlertsStatus[i].alertSent = true;
                     }
-               }
-
-               // Keep track of the current grand prix name
-               if (currentGrandPrixName !== eventInfo.race.meetingOfficialName) {
-                    currentGrandPrixName = eventInfo.race.meetingOfficialName;
-                    logger.info(`Current Grand Prix: ${currentGrandPrixName}`);
-
-                    // Reset these flags when the grand prix name changes
-                    wasCircuitPhotoSent = false;
-                    allResultsSent = false;
                }
           });
 
