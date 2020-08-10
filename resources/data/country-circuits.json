@@ -105,7 +105,7 @@
           "locality": "Shanghai"
      },
      {
-          "id": "United Kingdom",
+          "id": "United Kingdom,Great Britain",
           "name": "Silverstone Circuit",
           "layoutImage": "silverstone.png",
           "country": "United Kingdom",
