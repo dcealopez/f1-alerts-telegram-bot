@@ -17,12 +17,12 @@
   },
   "homepage": "https://github.com/dcealopez/f1-alerts-telegram-bot#readme",
   "dependencies": {
-    "cron": "^1.7.2",
+    "cron": "^1.8.2",
     "dotenv": "^8.2.0",
-    "log4js": "^6.0.0",
+    "log4js": "^6.3.0",
     "node-schedule": "^1.3.2",
-    "puppeteer": "^2.0.0",
-    "request": "^2.88.0",
-    "telegraf": "^3.33.3"
+    "puppeteer": "^2.1.1",
+    "request": "^2.88.2",
+    "telegraf": "^3.38.0"
   }
 }
