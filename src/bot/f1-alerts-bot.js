@@ -543,7 +543,7 @@ module.exports = {
                     let eventHasSprintQualifying = false;
 
                     for (let i = 0; i < timetables.length; i++) {
-                         if (timetable[i].session === 's') {
+                         if (timetables[i].session === 's') {
                               eventHasSprintQualifying = true;
                               break;
                          }
