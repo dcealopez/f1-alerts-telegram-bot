@@ -540,7 +540,7 @@ module.exports = {
                     sessionAlertsStatus = [];
 
                     // Check if the current event has the new sprint qualifying format
-                    var eventHasSprintQualifying = false;
+                    let eventHasSprintQualifying = false;
 
                     for (let i = 0; i < timetables.length; i++) {
                          if (timetables[i].session === 's') {
@@ -550,7 +550,7 @@ module.exports = {
                     }
 
                     // Logical order of the sessions
-                    const sessionOrder = null;
+                    let sessionOrder = null;
 
                     if (eventHasSprintQualifying) {
                          sessionOrder = ['p1', 'q', 'p2', 's', 'r'];
