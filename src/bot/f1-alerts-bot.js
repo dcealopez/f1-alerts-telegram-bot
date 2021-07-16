@@ -540,7 +540,7 @@ module.exports = {
                     sessionAlertsStatus = [];
 
                     // Check if the current event has the new sprint qualifying format
-                    let eventHasSprintQualifying = false;
+                    var eventHasSprintQualifying = false;
 
                     for (let i = 0; i < timetables.length; i++) {
                          if (timetables[i].session === 's') {
