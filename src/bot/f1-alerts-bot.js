@@ -539,14 +539,24 @@ module.exports = {
                if (sessionAlertsStatus === null || currentGrandPrixName !== eventInfo.race.meetingOfficialName) {
                     sessionAlertsStatus = [];
 
+                    // Check if the current event has the new sprint qualifying format
+                    let eventHasSprintQualifying = false;
+
+                    for (let i = 0; i < timetables.length; i++) {
+                         if (timetable[i].session === 's') {
+                              eventHasSprintQualifying = true;
+                              break;
+                         }
+                    }
+
                     // Logical order of the sessions
-                    const sessionOrder = [
-                         'p1',
-                         'p2',
-                         'p3',
-                         'q',
-                         'r'
-                    ];
+                    const sessionOrder = null;
+
+                    if (eventHasSprintQualifying) {
+                         sessionOrder = ['p1', 'q', 'p2', 's', 'r'];
+                    } else {
+                         sessionOrder = ['p1', 'p2', 'p3', 'q', 'r'];
+                    }
 
                     for (let i = 0; i < timetables.length; i++) {
                          // Get the previous session index in the timetables for every session
