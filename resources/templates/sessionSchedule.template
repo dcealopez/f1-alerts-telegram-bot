@@ -11,6 +11,7 @@
 <b>🇺🇸 Austin:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Chicago' })}}
 <b>🇺🇸 Los Angeles:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('en-US', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Los_Angeles' })}}
 <b>🇲🇽 Mexico City:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-MX', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Mexico_City' })}}
+<b>🇨🇷 Costa Rica:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Costa_Rica' })}}
 
 <b>- South America -</b>
 <b>🇨🇱 Santiago:</b> {{new Date(`${templateData.startTime}${templateData.gmtOffset}`).toLocaleString('es-CL', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Santiago' })}}
