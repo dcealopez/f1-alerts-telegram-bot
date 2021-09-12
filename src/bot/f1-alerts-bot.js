@@ -575,7 +575,7 @@ module.exports = {
                          }
 
                          sessionAlertsStatus.push({
-                              description: timetables[i].description,
+                              startTime: timetables[i].startTime,
                               state: timetables[i].state,
                               alertSent: false,
                               scheduleSent: false,
@@ -608,7 +608,7 @@ module.exports = {
 
                     // Reset results shown status and update data for the session alerts status list
                     sessionAlertsStatus[i].resultsShown = false;
-                    sessionAlertsStatus[i].description = timetables[i].description;
+                    sessionAlertsStatus[i].startTime = timetables[i].startTime;
                     sessionAlertsStatus[i].state = timetables[i].state;
 
                     // Get time diff until session start
@@ -672,7 +672,7 @@ module.exports = {
                // Show results if the session is completed
                if (sessionInfo.ArchiveStatus.Status === 'Complete' && sessionAlertsStatus !== null && !allResultsSent) {
                     for (let i = 0; i < sessionAlertsStatus.length; i++) {
-                         if (sessionInfo.Name === sessionAlertsStatus[i].description
+                         if (sessionInfo.StartDate === sessionAlertsStatus[i].startTime
                               && !sessionAlertsStatus[i].resultsShown && sessionAlertsStatus[i].state == 'completed') {
                               f1api.getSessionResults(sessionInfo, async (err, sessionResults) => {
                                    if (err) {
